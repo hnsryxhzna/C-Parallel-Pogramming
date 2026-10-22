@@ -31,10 +31,6 @@ int message_box_initialize(message_box* m) {
 int message_box_free(message_box* m) {
     pthread_mutex_destroy(&m->message_lock);
 
-    // for (int i = 0; i < m->position; i++) {
-    //     free(m->messages[i].content);
-    // }
-
     return 0;
 }
 
@@ -73,12 +69,12 @@ int message_receive(message_box *m, message* message_buffer) {
 
 void* f0(void* arg) {
     (void) arg;
-    char message_buffer[MSG_LEN];
     message new_message;
     message receive_message_buffer;
 
     while (
         printf("Person0 input: "),
+        fflush(stdout),
         fgets(new_message.content, sizeof(new_message.content), stdin)
     ) {
 
@@ -87,21 +83,24 @@ void* f0(void* arg) {
             exit(-1);
         }
 
-        message_receive(&box1, &receive_message_buffer);
-        printf("Person0 got: %s\n", receive_message_buffer.content);
+        if (message_receive(&box1, &receive_message_buffer)) {
+            printf("Person0 got: %s\n", receive_message_buffer.content);
+        } else {
+            printf("Person0 got: (nothing)\n");
+        }
     }
 
-    return NULL;   
+    return NULL;
 }
 
 void* f1(void* arg) {
     (void) arg;
-    char message_buffer[MSG_LEN];
     message new_message;
     message receive_message_buffer;
 
     while (
         printf("Person1 input: "),
+        fflush(stdout),
         fgets(new_message.content, sizeof(new_message.content), stdin)
     ) {
 
@@ -110,8 +109,11 @@ void* f1(void* arg) {
             exit(-1);
         }
 
-        message_receive(&box0, &receive_message_buffer);
-        printf("Person1 got: %s\n", receive_message_buffer.content);
+        if (message_receive(&box0, &receive_message_buffer)) {
+            printf("Person1 got: %s\n", receive_message_buffer.content);
+        } else {
+            printf("Person1 got: (nothing)%s\n");
+        }
     }
 
     return NULL;   

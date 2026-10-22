@@ -16,7 +16,7 @@ void *thread_function(void* arg) {
     return NULL;
 }
 
-int main() {
+int main(void) {
     pthread_t threads[NUM_THREADS];
     int thread_args[NUM_THREADS];
 
